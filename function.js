@@ -25,7 +25,7 @@ const kintone_user_client = new KintoneRestAPIClient({
 // 餃子ランクに対応するメッセージを返す関数
 // **************************
 async function getGyozaRankMessage(record) {
-  let level_id = (Number(record.point.value) === 0) ? 11 : record.point.value;
+  let level_id = (Number(record.point.value) === 0) ? 11 : (Number(record.point.value) + 1) ;
   const result = await kintone_level_client.record.getRecord({
     app: kintoneGyozaLevelAppId,
     id: level_id
@@ -182,6 +182,7 @@ async function postbackFunc(event) {
   // ログインユーザーの回答ステータスを更新する
   let update_point = Number(current_user_data.records[0].point.value) + get_point;
   const update_current_user_data = await updateChallengerStatus(current_user_data.records[0].$id.value, params_obj, update_point);
+  console.log(update_current_user_data);
 
   // 10問解き終わっていたらメッセージを返す
   if (current_user_data.records[0].table.value.length === max) {
