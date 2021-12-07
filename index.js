@@ -2,6 +2,8 @@
 
 const line = require('@line/bot-sdk');
 const express = require('express');
+const conf = require("./conf")
+const func = require("./function")
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN,
@@ -15,7 +17,6 @@ const client = new line.Client(config);
 const app = express();
 
 // webhookのhandler設定
-// エンドポイントになりそう？
 app.post('/callback', line.middleware(config), (req, res) => {
   Promise
     .all(req.body.events.map(handleEvent))
@@ -26,18 +27,33 @@ app.post('/callback', line.middleware(config), (req, res) => {
     });
 });
 
-// event handler
-function handleEvent(event) {
-  if (event.type !== 'message' || event.message.type !== 'text') {
-    // ignore event
-    return Promise.resolve(null);
+async function handleEvent(event) {
+  let reply_msg;
+  switch (event.type){
+
+    // **************************
+    // メッセージイベント受信時に実行
+    // **************************
+    case "message":
+      reply_msg = await func.messageFunc(event);
+      console.log(reply_msg)
+      break;
+
+    // **************************
+    // 問題の返信(postback)イベント受信時に実行
+    // **************************
+    case "postback":
+      reply_msg = await func.postbackFunc(event);
+      break;
   }
 
-  // returnするメッセージの処理
-  const echo = { type: 'text', text: event.message.text };
-
-  // use reply API
-  return client.replyMessage(event.replyToken, echo);
+  if (reply_msg !== undefined) {
+    return client
+      .replyMessage(event.replyToken, reply_msg)
+      .catch((err) => {
+        console.error(err);
+      })
+  }
 }
 
 // listen on port
