@@ -216,7 +216,7 @@ async function getGyozaQuizFunc(event) {
 
   // ログインしているユーザーのクイズ数を確認
   // 最新のレコードが0,10問の時は新規レコード,10問以内は更新
-  if (current_user_data.records[0].length === 0 || current_user_data.records[0].table.value.length === max) {
+  if (current_user_data.totalCount === null || current_user_data.records[0].length === 0 || current_user_data.records[0].table.value.length === max) {
     const postUser = await postGyozaQuizChallengerRecord(event, result.record);
   } else {
     let params_obj = [];
@@ -321,9 +321,9 @@ async function messageTextFunc(event) {
     case ('問題をつくる'):
       console.log('問題をつくる');
       break;
-    case ('問合せ'):
+    case ('問い合わせ'):
       console.log('問合せ');
-      message = { type: 'text', text: 'お問合せ？' };
+      message = { type: 'text', text: '作成中です。暫しお待ちください。' };
       break;
     default:
       console.log(event);
