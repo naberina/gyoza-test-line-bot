@@ -216,9 +216,9 @@ async function getGyozaQuizFunc(event) {
 
   // ログインしているユーザーのクイズ数を確認
   // 最新のレコードが0,10問の時は新規レコード,10問以内は更新
-  console.log(current_user_data);
-  console.log(current_user_data.totalCount);
-  if (current_user_data.totalCount === null || current_user_data.records[0].length === 0 || current_user_data.records[0].table.value.length === max) {
+  console.log(current_user_data.records);
+  console.log(current_user_data.records.レコード番号.value);
+  if (current_user_data.records.length === 0 || current_user_data.records[0].length === 0 || current_user_data.records[0].table.value.length === max) {
     const postUser = await postGyozaQuizChallengerRecord(event, result.record);
   } else {
     let params_obj = [];
